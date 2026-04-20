@@ -161,3 +161,105 @@ Since 80% of transactions occur without any promotion, the dataset is highly imb
 
 This ensures that the model learns meaningful patterns for all promotion types.
 
+
+# B3. Model Evaluation and Deployment
+
+## (a) Train-Test Split and Evaluation Metrics
+
+* **Train-Test Split Strategy:**
+  Since the data is time-based (monthly data over three years), a **temporal split** should be used instead of a random split.
+
+  * Train the model on the **first 2–2.5 years of data**
+  * Test the model on the **most recent months (last 6–12 months)**
+
+* **Why Random Split is Inappropriate:**
+
+  * A random split can cause **data leakage**, where future information is used during training
+  * It breaks the natural time order and leads to overly optimistic performance
+  * In real-world scenarios, we always predict future outcomes using past data
+
+* **Evaluation Metrics:**
+
+  1. **RMSE (Root Mean Squared Error):**
+
+     * Measures the average prediction error with higher penalty for large errors
+     * Useful for identifying models that make large mistakes
+
+  2. **MAE (Mean Absolute Error):**
+
+     * Measures the average absolute difference between predicted and actual values
+     * Easy to interpret in business terms (e.g., average error in items sold)
+
+  3. **R² Score (optional):**
+
+     * Indicates how well the model explains the variance in sales
+     * Higher value means better overall fit
+
+* **Interpretation in Business Context:**
+
+  * Lower RMSE and MAE indicate more accurate sales predictions
+  * MAE is especially useful as it directly reflects average prediction error in units (items sold)
+  * The goal is to minimize prediction error to make better promotion decisions
+
+---
+
+## (b) Explaining Model Recommendations using Feature Importance
+
+To understand why the model recommends different promotions for the same store in different months, we can analyze **feature importance**.
+
+* **Approach:**
+
+  * Extract feature importance from the trained model (e.g., Random Forest)
+  * Identify the top features influencing predictions (e.g., month, festival flag, promotion type, competition density)
+
+* **Explanation:**
+
+  * In **December**, factors such as **festival season, higher demand, and increased customer activity** may make Loyalty Points Bonus more effective
+  * In **March**, lower seasonal demand or different customer behavior may make Flat Discount more impactful
+
+* **Communication to Marketing Team:**
+
+  * Present top influencing features using charts or tables
+  * Explain that the model adapts recommendations based on **seasonality, customer behavior, and contextual factors**
+  * Emphasize that recommendations are **data-driven and dynamic**, not fixed per store
+
+This helps build trust in the model and ensures better decision-making.
+
+---
+
+## (c) Model Deployment and Monitoring
+
+* **Model Saving:**
+
+  * Save the trained pipeline (preprocessing + model) using tools like `joblib` or `pickle`
+  * This ensures the same transformations are applied during prediction
+
+* **Monthly Prediction Workflow:**
+
+  1. Collect new monthly data for all stores
+  2. Apply the same preprocessing steps (handled automatically by the pipeline)
+  3. Load the saved model
+  4. Generate predictions for `items_sold` under different promotion scenarios
+  5. Recommend the promotion with the highest predicted sales
+
+* **Automation:**
+
+  * Schedule this process to run at the **start of every month**
+  * Generate a report/dashboard with recommendations for all 50 stores
+
+* **Monitoring and Retraining:**
+
+  * Track model performance over time using metrics like RMSE and MAE
+  * Monitor **data drift** (changes in input feature distributions)
+  * Monitor **prediction drift** (changes in predicted vs actual values)
+  * If performance degrades significantly, retrain the model with updated data
+
+* **Goal:**
+  Ensure the model remains accurate, reliable, and aligned with changing business conditions.
+
+---
+
+### Conclusion
+
+A robust evaluation strategy, clear interpretability, and a well-designed deployment pipeline ensure that the model delivers consistent and actionable business value over time.
+
