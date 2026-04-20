@@ -72,3 +72,92 @@ Instead of using a single global model across all 50 stores, a more effective ap
 
 By framing this as a regression problem, selecting the correct target variable, and adopting a segmented modelling approach, the retailer can significantly improve the effectiveness of its promotional strategies and maximize overall sales performance.
 
+
+
+
+# B2. Data and EDA Strategy
+
+## (a) Data Joining and Dataset Design
+
+The raw data is available in four separate tables: transactions, store attributes, promotion details, and calendar.
+
+* **Joining Strategy:**
+
+  * Use `store_id` to join **transactions** with **store attributes**
+  * Use `promotion_type` (or promotion ID) to join with **promotion details**
+  * Use `transaction_date` to join with the **calendar table** (to get weekend and festival flags)
+
+* **Grain of Final Dataset:**
+
+  * The final dataset should have **one row per store per day per promotion**
+  * This ensures that each row represents a unique business scenario for prediction
+
+* **Aggregations:**
+  Before modelling, the following aggregations should be performed:
+
+  * Total `items_sold` per store per day
+  * Average `basket_size` or transaction value
+  * Total number of transactions (proxy for footfall)
+  * Count or presence of promotions applied
+
+These aggregations help convert raw transactional data into meaningful features for modelling.
+
+---
+
+## (b) Exploratory Data Analysis (EDA)
+
+Before building the model, the following EDA steps should be performed:
+
+1. **Target Distribution (Histogram of items_sold):**
+
+   * Check if the target variable is skewed or normally distributed
+   * If highly skewed, consider transformations (e.g., log transformation)
+
+2. **Promotion-wise Performance (Bar Plot):**
+
+   * Compare average `items_sold` across different promotion types
+   * Helps identify which promotions are generally more effective
+
+3. **Correlation Heatmap:**
+
+   * Analyze relationships between numerical features
+   * Detect multicollinearity and identify strong predictors of sales
+
+4. **Time-based Trends (Line Plot):**
+
+   * Plot `items_sold` over time (daily/weekly)
+   * Identify seasonality, trends, and festival spikes
+
+5. **Boxplots by Store Type or Location:**
+
+   * Compare sales distribution across urban, semi-urban, and rural stores
+   * Helps understand how location impacts performance
+
+* **Impact on Modelling:**
+
+  * Skewed data → apply transformations
+  * Strong correlations → feature selection or dimensionality reduction
+  * Seasonal trends → include time-based features
+  * Store differences → consider segmented models
+
+---
+
+## (c) Handling Promotion Imbalance
+
+Since 80% of transactions occur without any promotion, the dataset is highly imbalanced.
+
+* **Impact on Model:**
+
+  * The model may become biased toward the "no promotion" scenario
+  * It may fail to learn the true impact of different promotions
+  * Predictions for promotional scenarios may be less accurate
+
+* **Steps to Address This:**
+
+  * Use **resampling techniques** (oversample promotion cases or undersample non-promotion cases)
+  * Apply **feature weighting** or include a strong `promotion_type` signal
+  * Evaluate model performance separately for promotional vs non-promotional data
+  * Consider building separate models for promotion and non-promotion scenarios
+
+This ensures that the model learns meaningful patterns for all promotion types.
+
