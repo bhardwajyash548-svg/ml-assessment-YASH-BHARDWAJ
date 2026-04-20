@@ -158,6 +158,6 @@ jupyter notebook
 ## 👤 Author
 
 **Yash Bhardwaj**
-Aspiring Business Analyst | Generative AI & Machine Learning Enthusiast
+
 
 ---
