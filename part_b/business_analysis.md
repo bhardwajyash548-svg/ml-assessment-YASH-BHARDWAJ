@@ -1,3 +1,7 @@
+# Scenario: Promotion Effectiveness at a Fashion Retail Chain
+
+A fashion retailer operates 50 stores across urban, semi-urban, and rural locations. Each month, the marketing team runs one of five promotions: Flat Discount, BOGO (Buy-One-Get-One), Free Gift with Purchase, Category-Specific Offer, and Loyalty Points Bonus. Stores vary in size, monthly footfall, local competition density, and customer demographics. The company wants to determine which promotion should be deployed in each store each month to maximise the number of items sold.
+
 # B1. Problem Formulation
 
 ## (a) Machine Learning Problem Formulation
